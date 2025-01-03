@@ -1,4 +1,5 @@
 import math
+import pandas as pd
 
 
 def haversine(lat1, lon1, lat2, lon2):
@@ -48,20 +49,27 @@ def fai_olc_distance(points):
         for j in range(i + 1, n):
             for k in range(j + 1, n):
                 # Calculate distances between points
+                d0 = haversine(*points[0], *points[i])
                 d1 = haversine(*points[i], *points[j])
                 d2 = haversine(*points[j], *points[k])
                 d3 = haversine(*points[k], *points[i])
+                d4 = haversine(*points[i], *points[-1])
                 # Check if it forms a valid FAI triangle
                 total_distance = d1 + d2 + d3
                 shortest_leg = min(d1, d2, d3)
 
                 if shortest_leg >= 0.28 * total_distance:
                     if total_distance > max_distance:
-                        max_distance = total_distance
+                        max_distance = total_distance + d0 + d4
                         best_triangle = (points[i], points[j], points[k])
 
     return max_distance, best_triangle
 
 
 if __name__ == "__main__":
-    pass
+    df = pd.read_csv("flight_data.csv")
+    gps_points = list(zip(df['latitude'].values.tolist(),
+                      df['longitude'].values.tolist()))
+    distance, triangle = fai_olc_distance(gps_points)
+    print(f"Maximum FAI OLC Distance: {distance:.2f} km")
+    print(f"Triangle Points: {triangle}")
