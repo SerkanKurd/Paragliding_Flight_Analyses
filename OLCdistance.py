@@ -51,7 +51,6 @@ def fai_olc_distance(points):
                 d1 = haversine(*points[i], *points[j])
                 d2 = haversine(*points[j], *points[k])
                 d3 = haversine(*points[k], *points[i])
-                print(d1, d2, d3)
                 # Check if it forms a valid FAI triangle
                 total_distance = d1 + d2 + d3
                 shortest_leg = min(d1, d2, d3)
@@ -64,10 +63,5 @@ def fai_olc_distance(points):
     return max_distance, best_triangle
 
 
-# Example usage
 if __name__ == "__main__":
-    # List of GPS points (latitude, longitude)
-    gps_points = [(40.0312, 32.3283), (40.01063333333333, 32.29765)]
-    distance, triangle = fai_olc_distance(gps_points)
-    print(f"Maximum FAI OLC Distance: {distance:.2f} km")
-    print(f"Triangle Points: {triangle}")
+    pass
