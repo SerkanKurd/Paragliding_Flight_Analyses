@@ -16,7 +16,7 @@ def haversine(lat1, lon1, lat2, lon2):
     R = 6371.0  # Earth's radius in kilometers
 
     # Convert degrees to radians
-    phi1, phi2 = math.radians(lat1), math.radians(lat2)
+    phi1, phi2 = math.radians(lat1),   math.radians(lat2)
     delta_phi = math.radians(lat2 - lat1)
     delta_lambda = math.radians(lon2 - lon1)
 
