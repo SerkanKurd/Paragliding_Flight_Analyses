@@ -49,18 +49,16 @@ def fai_olc_distance(points):
         for j in range(i + 1, n):
             for k in range(j + 1, n):
                 # Calculate distances between points
-                d0 = haversine(*points[0], *points[i])
                 d1 = haversine(*points[i], *points[j])
                 d2 = haversine(*points[j], *points[k])
                 d3 = haversine(*points[k], *points[i])
-                d4 = haversine(*points[i], *points[-1])
                 # Check if it forms a valid FAI triangle
                 total_distance = d1 + d2 + d3
                 shortest_leg = min(d1, d2, d3)
 
                 if shortest_leg >= 0.28 * total_distance:
                     if total_distance > max_distance:
-                        max_distance = total_distance + d0 + d4
+                        max_distance = total_distance
                         best_triangle = (points[i], points[j], points[k])
 
     return max_distance, best_triangle
