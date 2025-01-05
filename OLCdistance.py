@@ -1,19 +1,9 @@
 import math
 import pandas as pd
+from itertools import combinations
 
 
 def haversine(lat1, lon1, lat2, lon2):
-    """
-    Calculate the great-circle distance between two points
-    on the Earth using the Haversine formula.
-
-    Parameters:
-    lat1, lon1 : Latitude and longitude of point 1 (in decimal degrees)
-    lat2, lon2 : Latitude and longitude of point 2 (in decimal degrees)
-
-    Returns:
-    Distance in kilometers.
-    """
     R = 6371.0  # Earth's radius in kilometers
 
     # Convert degrees to radians
@@ -30,36 +20,29 @@ def haversine(lat1, lon1, lat2, lon2):
 
 
 def fai_olc_distance(points):
-    """
-    Calculate the FAİ OLC distance for a given set of GPS points.
-
-    Parameters:
-    points : List of tuples [(lat, lon), ...]
-             List of latitude and longitude coordinates in decimal degrees.
-
-    Returns:
-    The maximum FAI OLC distance and the triangle points.
-    """
-    n = len(points)
     max_distance = 0
     best_triangle = None
+    num_points = len(points)
+    distances = {}
+    for i, j, k in combinations(range(num_points), 3):
+        if (i, j) not in distances:
+            distances[(i, j)] = haversine(*points[i], *points[j])
+        if (j, k) not in distances:
+            distances[(j, k)] = haversine(*points[j], *points[k])
+        if (k, i) not in distances:
+            distances[(k, i)] = haversine(*points[k], *points[i])
 
-    # Iterate through all possible triangles
-    for i in range(n):
-        for j in range(i + 1, n):
-            for k in range(j + 1, n):
-                # Calculate distances between points
-                d1 = haversine(*points[i], *points[j])
-                d2 = haversine(*points[j], *points[k])
-                d3 = haversine(*points[k], *points[i])
-                # Check if it forms a valid FAI triangle
-                total_distance = d1 + d2 + d3
-                shortest_leg = min(d1, d2, d3)
+        d1 = distances[(i, j)]
+        d2 = distances[(j, k)]
+        d3 = distances[(k, i)]
 
-                if shortest_leg >= 0.28 * total_distance:
-                    if total_distance > max_distance:
-                        max_distance = total_distance
-                        best_triangle = (points[i], points[j], points[k])
+        total_distance = d1 + d2 + d3
+        shortest_leg = min(d1, d2, d3)
+
+        if shortest_leg >= 0.28 * total_distance:
+            if total_distance > max_distance:
+                max_distance = total_distance
+                best_triangle = (points[i], points[j], points[k])
 
     return max_distance, best_triangle
 
