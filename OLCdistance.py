@@ -23,19 +23,11 @@ def fai_olc_distance(points):
     max_distance = 0
     best_triangle = None
     num_points = len(points)
-    distances = {}
-    for i, j, k in combinations(range(num_points), 3):
-        if (i, j) not in distances:
-            distances[(i, j)] = haversine(*points[i], *points[j])
-        if (j, k) not in distances:
-            distances[(j, k)] = haversine(*points[j], *points[k])
-        if (k, i) not in distances:
-            distances[(k, i)] = haversine(*points[k], *points[i])
-
-        d1 = distances[(i, j)]
-        d2 = distances[(j, k)]
-        d3 = distances[(k, i)]
-
+    combinations_list = list(combinations(range(num_points), 3))
+    for i, j, k in combinations_list:
+        d1 = haversine(*points[i], *points[j])
+        d2 = haversine(*points[j], *points[k])
+        d3 = haversine(*points[k], *points[i])
         total_distance = d1 + d2 + d3
         shortest_leg = min(d1, d2, d3)
 
