@@ -1,13 +1,13 @@
 import math
-import pandas as pd
 from itertools import combinations
+from geopy.distance import great_circle as great_circle
+from geopy.distance import geodesic as geodesic
 
 
-def haversine(lat1, lon1, lat2, lon2):
+def haversine1(lat1, lon1, lat2, lon2):
     R = 6371.0  # Earth's radius in kilometers
-
     # Convert degrees to radians
-    phi1, phi2 = math.radians(lat1),   math.radians(lat2)
+    phi1, phi2 = math.radians(lat1), math.radians(lat2)
     delta_phi = math.radians(lat2 - lat1)
     delta_lambda = math.radians(lon2 - lon1)
 
@@ -15,8 +15,15 @@ def haversine(lat1, lon1, lat2, lon2):
     a = math.sin(delta_phi / 2.0)**2 + math.cos(phi1) * \
         math.cos(phi2) * math.sin(delta_lambda / 2.0)**2
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
-
     return R * c
+
+
+def great_circle_circle(lat1, lon1, lat2, lon2):
+    return great_circle((lat1, lon1), (lat2, lon2)).kilometers
+
+
+def geodesic_distance(lat1, lon1, lat2, lon2):
+    return geodesic((lat1, lon1), (lat2, lon2)).kilometers
 
 
 def fai_olc_distance(points):
@@ -35,14 +42,8 @@ def fai_olc_distance(points):
             if total_distance > max_distance:
                 max_distance = total_distance
                 best_triangle = (points[i], points[j], points[k])
-
     return max_distance, best_triangle
 
 
 if __name__ == "__main__":
-    df = pd.read_csv("flight_data.csv")
-    gps_points = list(zip(df['latitude'].values.tolist(),
-                      df['longitude'].values.tolist()))
-    distance, triangle = fai_olc_distance(gps_points)
-    print(f"Maximum FAI OLC Distance: {distance:.2f} km")
-    print(f"Triangle Points: {triangle}")
+    pass
