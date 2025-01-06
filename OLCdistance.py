@@ -4,7 +4,7 @@ from geopy.distance import great_circle as great_circle
 from geopy.distance import geodesic as geodesic
 
 
-def haversine1(lat1, lon1, lat2, lon2):
+def haversine(lat1, lon1, lat2, lon2):
     R = 6371.0  # Earth's radius in kilometers
     # Convert degrees to radians
     phi1, phi2 = math.radians(lat1), math.radians(lat2)
