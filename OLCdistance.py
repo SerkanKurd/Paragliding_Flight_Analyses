@@ -2,6 +2,7 @@ import math
 from itertools import combinations
 from geopy.distance import great_circle as great_circle
 from geopy.distance import geodesic as geodesic
+import pandas as pd
 
 
 def haversine(lat1, lon1, lat2, lon2):
@@ -24,6 +25,11 @@ def great_circle_circle(lat1, lon1, lat2, lon2):
 
 def geodesic_distance(lat1, lon1, lat2, lon2):
     return geodesic((lat1, lon1), (lat2, lon2)).kilometers
+
+
+def distances(points):
+    df = pd.DataFrame(points, columns=points).to_csv('points.csv')
+    return df
 
 
 def fai_olc_distance(points):
