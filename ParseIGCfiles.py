@@ -59,8 +59,12 @@ def getfile(file_name):
     )
     df.insert(1, "pilot", pilot_name)
 
+    # for i in range(1, len(df)-1):
+    #     if i % 10 > 0:
+    #         df = df.drop([i])
+
     if os.path.exists("flight_data.csv"):
-        df.to_csv("flight_data.csv", mode="a", index=False)
+        df.to_csv("flight_data.csv", mode="a", header=False, index=False)
     else:
         df.to_csv("flight_data.csv", header=True, index=False)
 
