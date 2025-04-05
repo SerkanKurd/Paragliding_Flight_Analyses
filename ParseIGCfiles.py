@@ -58,10 +58,8 @@ def getfile(file_name):
             errors='coerce')
     )
     df.insert(1, "pilot", pilot_name)
-
-    # for i in range(1, len(df)-1):
-    #     if i % 10 > 0:
-    #         df = df.drop([i])
+    df.insert(0, "filename", file_name.split("\\")[-1])
+    df = df.iloc[::10, :]
 
     if os.path.exists("flight_data.csv"):
         df.to_csv("flight_data.csv", mode="a", header=False, index=False)
@@ -69,12 +67,17 @@ def getfile(file_name):
         df.to_csv("flight_data.csv", header=True, index=False)
 
 
-files = os.listdir("data")
-if os.path.exists("flight_data.csv"):
-    os.remove("flight_data.csv")
-for file in files:
-    if file.endswith(".igc"):
-        print(file, "-->start")
-        getfile(os.path.join("data", file))
-        print(file, "-->done")
-print(len(files), "file(s) processed successfully.")
+def main():
+    files = os.listdir("data")
+    if os.path.exists("flight_data.csv"):
+        os.remove("flight_data.csv")
+    for file in files:
+        if file.endswith(".igc"):
+            print(file, "-->start")
+            getfile(os.path.join("data", file))
+            print(file, "-->done")
+    print(len(files), "file(s) processed successfully.")
+
+
+if __name__ == "__main__":
+    main()
