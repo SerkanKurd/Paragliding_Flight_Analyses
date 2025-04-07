@@ -61,20 +61,22 @@ def getfile(file_name):
     df.insert(0, "filename", file_name.split("\\")[-1])
     df = df.iloc[::10, :]
 
-    if os.path.exists("flight_data.csv"):
-        df.to_csv("flight_data.csv", mode="a", header=False, index=False)
+    if os.path.exists(os.path.join("data", "flight_data.csv")):
+        df.to_csv(os.path.join("data", "flight_data.csv"),
+                  mode="a", header=False, index=False)
     else:
-        df.to_csv("flight_data.csv", header=True, index=False)
+        df.to_csv(os.path.join("data", "flight_data.csv"),
+                  header=True, index=False)
 
 
 def main():
-    files = os.listdir("data")
-    if os.path.exists("flight_data.csv"):
-        os.remove("flight_data.csv")
+    if os.path.exists(os.path.join("data", "flight_data.csv")):
+        os.remove(os.path.join("data", "flight_data.csv"))
+    files = os.listdir("flightlogs")
     for file in files:
         if file.endswith(".igc"):
             print(file, "-->start")
-            getfile(os.path.join("data", file))
+            getfile(os.path.join("flightlogs", file))
             print(file, "-->done")
     print(len(files), "file(s) processed successfully.")
 

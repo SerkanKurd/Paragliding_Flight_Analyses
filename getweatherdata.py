@@ -28,8 +28,8 @@ def main(filename, lat, lon, timestamp):
     # date = timestamp.strftime("%Y-%m-%d")
     dt = int(timestamp.timestamp())
 
-    if os.path.exists("weather_data.csv"):
-        df = pd.read_csv("weather_data.csv")
+    if os.path.exists(os.path.join("data", "weather_data.csv")):
+        df = pd.read_csv(os.path.join("data", "weather_data.csv"))
         matched_rows = df[(df["filename"] == filename)]
     else:
         matched_rows = pd.DataFrame()
@@ -49,13 +49,15 @@ def main(filename, lat, lon, timestamp):
         else:
             df = weather_data
 
-        df.to_csv("weather_data.csv", index=False)
+        df.to_csv(os.path.join("data", "weather_data.csv"), index=False)
 
         result = pd.Series(weather_data[[
-                           "temp", "pressure", "humidity", "dew_point", "wind_speed", "wind_deg"]].iloc[0])
+                           "temp", "pressure", "humidity", 
+                           "dew_point", "wind_speed", "wind_deg"]].iloc[0])
     else:
         result = pd.Series(matched_rows[[
-                           "temp", "pressure", "humidity", "dew_point", "wind_speed", "wind_deg"]].iloc[0])
+                           "temp", "pressure", "humidity", 
+                           "dew_point", "wind_speed", "wind_deg"]].iloc[0])
 
     return result.values.tolist()
 
