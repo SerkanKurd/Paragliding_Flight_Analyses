@@ -38,48 +38,44 @@ def parse_trackpoint(line):
     }
 
 
-def getfile(file_name):
+def getfile(file_name, loginterval=1):
     with open(file_name, 'r') as file:
         lines = file.readlines()
 
     flight_data = [line for line in lines if line.startswith('B')]
     flight_date = [line for line in lines if line.startswith(
         'HFDTE')][0][-7:].strip()
+    print(flight_date)
     pilot_name = [line for line in lines if "PILOT" in line][0]
     pilot_name = pilot_name.split(":")[1].strip()
     df = pd.DataFrame([parse_trackpoint(line) for line in flight_data])
-    df.insert(
-        0,
-        "date",
-        pd.to_datetime(
-            flight_date,
-            format='%d%m%y',
-            dayfirst=True,
-            errors='coerce')
-    )
-    df.insert(1, "pilot", pilot_name)
-    df.insert(0, "filename", file_name.split("\\")[-1])
+    df["datetime"] = pd.to_datetime(
+        flight_date + " " + df["time"], format="%d%m%y %H:%M:%S")
+    df["pilot"] = pilot_name
+    df["filename"] = file_name.split("\\")[-1]
+    df = df[[
+        "filename",
+        "datetime",
+        "pilot",
+        "latitude",
+        "longitude",
+        "gps_altitude_m",
+        "pressure_altitude_m"
+    ]]
 
-    # df = df.iloc[::10, :]
+    if loginterval > 1:
+        # Downsample the DataFrame
+        df = df.iloc[::loginterval, :]
 
-    if os.path.exists(os.path.join("data", "flight_data.csv")):
-        df.to_csv(os.path.join("data", "flight_data.csv"),
-                  mode="a", header=False, index=False)
-    else:
-        df.to_csv(os.path.join("data", "flight_data.csv"),
-                  header=True, index=False)
+    return df  # Pandas DataFrame with parsed data
 
 
 def main():
-    if os.path.exists(os.path.join("data", "flight_data.csv")):
-        os.remove(os.path.join("data", "flight_data.csv"))
-    files = os.listdir("flightlogs")
-    for file in files:
-        if file.endswith(".igc"):
-            print(file, "-->start")
-            getfile(os.path.join("flightlogs", file))
-            print(file, "-->done")
-    print(len(files), "file(s) processed successfully.")
+    # Example usage
+    file = os.listdir("flightlogs")[0]
+    df = getfile("flightlogs\\" + file, 10)
+    print(df.head())
+    print(df.info())
 
 
 if __name__ == "__main__":
