@@ -59,7 +59,7 @@ def getfile(file_name):
     )
     df.insert(1, "pilot", pilot_name)
     df.insert(0, "filename", file_name.split("\\")[-1])
-    
+
     # df = df.iloc[::10, :]
 
     if os.path.exists(os.path.join("data", "flight_data.csv")):
