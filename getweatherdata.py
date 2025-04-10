@@ -8,29 +8,40 @@ from datetime import datetime, timezone
 import os
 
 
-def api_call(lat, lon, dt):
-    url = f"https://api.openweathermap.org/data/3.0/onecall/timemachine?lat={lat}&lon={lon}&units=metric&dt={dt}&appid=bedfa32222f31e3d52efbe3fc142575e"
-    response = requests.get(url)
-    if response.status_code == 200:
-        data = response.json()
-        return data
-    else:
-        return f"Request failed with status {response.status_code}"
+def api_call():          #lat, lon, dt):
+    # OpenWeatherMap API call
+    with open(os.path.join("data", "api_call_counter.txt"), "a") as file:
+        api_call_counter = int(file.readline().strip())
+
+    api_call_counter += 1
+    print(api_call_counter)
+
+        file.writelines(str(api_call_counter))
+
+    # url = f"https://api.openweathermap.org/data/3.0/onecall/timemachine?lat={lat}&lon={lon}&units=metric&dt={dt}&appid=bedfa32222f31e3d52efbe3fc142575e"
+    # response = requests.get(url)
+    # if response.status_code == 200:
+    #     data = response.json()
+    #     return data
+    # else:
+    #     return f"Request failed with status {response.status_code}"
 
 
-def main(filename, lat, lon, timestamp):
+def main(lat, lon, timestamp):
 
-    lat = round(lat, 2)
-    lon = round(lon, 2)
-    if type(timestamp) == str:
+    lat = round(lat, 1)
+    lon = round(lon, 1)
+    if type(timestamp) is str:
         timestamp = datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S")
-    timestamp = timestamp.replace(tzinfo=timezone.utc)
-    # date = timestamp.strftime("%Y-%m-%d")
+
+    timestamp = timestamp.replace(tzinfo=timezone.utc,
+                                  minute=0, second=0, microsecond=0)
     dt = int(timestamp.timestamp())
 
     if os.path.exists(os.path.join("data", "weather_data.csv")):
         df = pd.read_csv(os.path.join("data", "weather_data.csv"))
-        matched_rows = df[(df["filename"] == filename)]
+        matched_rows = df[df["lat"] == lat, df["lon"] == lon,
+                          df["datetime"] == timestamp]
     else:
         matched_rows = pd.DataFrame()
 
@@ -39,8 +50,7 @@ def main(filename, lat, lon, timestamp):
         weather_data = pd.json_normalize(weather_json["data"][0])
         weather_data["lat"] = weather_json["lat"]
         weather_data["lon"] = weather_json["lon"]
-        weather_data["filename"] = filename
-        weather_data = weather_data[["filename", "lat", "lon", "dt", "temp",
+        weather_data = weather_data[["lat", "lon", "datetime", "temp",
                                      "pressure", "humidity", "dew_point",
                                      "wind_speed", "wind_deg"]]
 
@@ -52,11 +62,11 @@ def main(filename, lat, lon, timestamp):
         df.to_csv(os.path.join("data", "weather_data.csv"), index=False)
 
         result = pd.Series(weather_data[[
-                           "temp", "pressure", "humidity", 
+                           "temp", "pressure", "humidity",
                            "dew_point", "wind_speed", "wind_deg"]].iloc[0])
     else:
         result = pd.Series(matched_rows[[
-                           "temp", "pressure", "humidity", 
+                           "temp", "pressure", "humidity",
                            "dew_point", "wind_speed", "wind_deg"]].iloc[0])
 
     return result.values.tolist()
@@ -64,4 +74,5 @@ def main(filename, lat, lon, timestamp):
 
 if __name__ == "__main__":
     # testing
-    print(main("20250504deneme.igc", 36.539000, 29.169517, "2025-04-05 12:30:00"))
+    # print(main(36.539000, 29.169517, "2025-04-05 12:35:00"))
+    api_call()

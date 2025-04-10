@@ -45,7 +45,6 @@ def getfile(file_name, loginterval=1):
     flight_data = [line for line in lines if line.startswith('B')]
     flight_date = [line for line in lines if line.startswith(
         'HFDTE')][0][-7:].strip()
-    print(flight_date)
     pilot_name = [line for line in lines if "PILOT" in line][0]
     pilot_name = pilot_name.split(":")[1].strip()
     df = pd.DataFrame([parse_trackpoint(line) for line in flight_data])
