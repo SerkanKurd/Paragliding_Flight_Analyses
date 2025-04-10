@@ -1,3 +1,4 @@
+import pandas as pd
 from geopy.distance import geodesic
 import math
 import getweatherdata
@@ -16,7 +17,8 @@ def calculate_bearing(row):
 
     x = math.sin(delta_lon) * math.cos(lat2)
     y = math.cos(lat1) * math.sin(lat2) - (math.sin(lat1)
-                                           * math.cos(lat2) * math.cos(delta_lon))
+                                           * math.cos(lat2) *
+                                           math.cos(delta_lon))
 
     initial_bearing = math.atan2(x, y)
     initial_bearing = math.degrees(initial_bearing)
@@ -26,15 +28,15 @@ def calculate_bearing(row):
 
 
 def calculate_distance(row):
-    return geodesic((row["previous_latitude"], row["previous_longitude"]), (row["latitude"], row["longitude"])).meters
+    return geodesic((row["previous_latitude"], row["previous_longitude"]),
+                    (row["latitude"], row["longitude"])).meters
 
 
 def get_weather_data(row):
     lat = float(row["latitude"])
     lon = float(row["longitude"])
     timestamp = row["datetime"]
-    filename = row["filename"]
-    result = getweatherdata.main(filename, lat, lon, timestamp)
+    result = getweatherdata.main(lat, lon, timestamp)
     return result
 
 
@@ -98,8 +100,11 @@ def prepare_data(filename):
         df["datetime"] - df["datetime"].iloc[0]).dt.total_seconds()
 
     df["zone"] = df.apply(lambda row: "thermal" if (
-        row["climb_m(delta)"] > 0 or row["climb_rate_m/s"] > 0) else "standart", axis=1)
-    # df[["temp", "pressure", "humidity", "dew_point", "wind_speed", "wind_deg"]] = df.apply(get_weather_data, axis=1, result_type="expand")
+        row["climb_m(delta)"] > 0 or
+        row["climb_rate_m/s"] > 0)
+        else "standart", axis=1)
+    df[["temp", "pressure", "humidity", "dew_point", "wind_speed", "wind_deg"]
+       ] = df.apply(get_weather_data, axis=1, result_type="expand")
 
     df.drop(["filename", "pilot", "previous_latitude", "previous_longitude",
             "climb_m", "distance_m"], axis=1, inplace=True)
@@ -120,8 +125,14 @@ def prepare_data(filename):
 
 
 if __name__ == "__main__":
-    df = prepare_data("2024-08-03 09_11_21.igc")
-    df.to_csv(os.path.join("data", "flight_data_processed.csv"), index=False)
+    df = pd.DataFrame()
+    files = os.listdir("flightlogs")
+    for file in files:
+        df_prepare = prepare_data(file)
+        df = pd.concat([df_prepare, df], ignore_index=True)
+        print(df.info())
+    # df.to_csv(os.path.join("data", "flight_data_processed.csv"), index=False)
+
     # create_map(df[["latitude",
     #                "longitude",
     #                "zone",
