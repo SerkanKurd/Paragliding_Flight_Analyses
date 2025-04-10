@@ -8,23 +8,15 @@ from datetime import datetime, timezone
 import os
 
 
-def api_call():          #lat, lon, dt):
+def api_call(lat, lon, dt):
     # OpenWeatherMap API call
-    with open(os.path.join("data", "api_call_counter.txt"), "a") as file:
-        api_call_counter = int(file.readline().strip())
-
-    api_call_counter += 1
-    print(api_call_counter)
-
-        file.writelines(str(api_call_counter))
-
-    # url = f"https://api.openweathermap.org/data/3.0/onecall/timemachine?lat={lat}&lon={lon}&units=metric&dt={dt}&appid=bedfa32222f31e3d52efbe3fc142575e"
-    # response = requests.get(url)
-    # if response.status_code == 200:
-    #     data = response.json()
-    #     return data
-    # else:
-    #     return f"Request failed with status {response.status_code}"
+    url = f"https://api.openweathermap.org/data/3.0/onecall/timemachine?lat={lat}&lon={lon}&units=metric&dt={dt}&appid=bedfa32222f31e3d52efbe3fc142575e"
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json()
+        return data
+    else:
+        return f"Request failed with status {response.status_code}"
 
 
 def main(lat, lon, timestamp):
@@ -40,17 +32,19 @@ def main(lat, lon, timestamp):
 
     if os.path.exists(os.path.join("data", "weather_data.csv")):
         df = pd.read_csv(os.path.join("data", "weather_data.csv"))
-        matched_rows = df[df["lat"] == lat, df["lon"] == lon,
-                          df["datetime"] == timestamp]
+        matched_rows = df[(df["lat"] == lat) &
+                          (df["lon"] == lon) &
+                          (df["dt"] == dt)]
     else:
         matched_rows = pd.DataFrame()
 
     if matched_rows.empty:
         weather_json = api_call(lat, lon, dt)
         weather_data = pd.json_normalize(weather_json["data"][0])
-        weather_data["lat"] = weather_json["lat"]
-        weather_data["lon"] = weather_json["lon"]
-        weather_data = weather_data[["lat", "lon", "datetime", "temp",
+        weather_data["lat"] = lat
+        weather_data["lon"] = lon
+        weather_data["datetime"] = timestamp
+        weather_data = weather_data[["lat", "lon", "datetime", "dt", "temp",
                                      "pressure", "humidity", "dew_point",
                                      "wind_speed", "wind_deg"]]
 
@@ -74,5 +68,4 @@ def main(lat, lon, timestamp):
 
 if __name__ == "__main__":
     # testing
-    # print(main(36.539000, 29.169517, "2025-04-05 12:35:00"))
-    api_call()
+    print(main(36.539000, 29.169517, "2025-04-05 12:35:00"))
