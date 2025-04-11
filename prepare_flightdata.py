@@ -42,22 +42,17 @@ def get_weather_data(row):
 
 def create_map(df):
     coordinates = df[["latitude", "longitude"]].values.tolist()
-    zone = df["zone"].values.tolist()
     climb_rate = df["climb_rate_m/s"].values.tolist()
     elapsed_time = df["elapsed_time"].values.tolist()
 
     map = fm.Map(location=coordinates[0], zoom_start=13)
     for x in range(len(coordinates)):
-        if zone[x] == "thermal":
-            color_ = 'red'
-        else:
-            color_ = 'blue'
         fm.CircleMarker(
             location=coordinates[x],
             radius=1,
-            color=color_,
+            color="blue",
             fill=True,
-            fill_color=color_,
+            fill_color="blue",
             popup=(f"{elapsed_time[x]}, \n{climb_rate[x]}")).add_to(map)
     fm.Marker(location=coordinates[0], popup="Takeoff").add_to(map)
     fm.Marker(location=coordinates[-1], popup="Landing").add_to(map)
@@ -98,16 +93,16 @@ def prepare_data(filename):
             break
     df["elapsed_time"] = (
         df["datetime"] - df["datetime"].iloc[0]).dt.total_seconds()
-
     df["zone"] = df.apply(lambda row: "thermal" if (
         row["climb_m(delta)"] > 0 or
         row["climb_rate_m/s"] > 0)
         else "standart", axis=1)
-    df[["temp", "pressure", "humidity", "dew_point", "wind_speed", "wind_deg"]
-       ] = df.apply(get_weather_data, axis=1, result_type="expand")
-
-    df.drop(["filename", "pilot", "previous_latitude", "previous_longitude",
-            "climb_m", "distance_m"], axis=1, inplace=True)
+    df[["temp",
+        "pressure",
+        "humidity",
+        "dew_point",
+        "wind_speed",
+        "wind_deg"]] = df.apply(get_weather_data, axis=1, result_type="expand")
     df = df[df["zone"] == "thermal"]
     df = df[["datetime",
              "latitude",
@@ -118,23 +113,31 @@ def prepare_data(filename):
              "speed_km/s",
              "climb_rate_m/s",
              "bearing",
+             "delta_bearing",
              "glide_ratio",
-             "elapsed_time"]]
-    df.head()
+             "elapsed_time",
+             "temp",
+             "pressure",
+             "humidity",
+             "dew_point",
+             "wind_speed",
+             "wind_deg"]]
     return df
 
 
 if __name__ == "__main__":
     df = pd.DataFrame()
-    files = os.listdir("flightlogs")
-    for file in files:
+    files = [f for f in os.listdir("flightlogs") if f.lower().endswith(".igc")]
+    for index in range(len(files)):
+        file = files[index]
+        print(f"Processing {index+1}/{len(files)} File: {file}")
         df_prepare = prepare_data(file)
+        print(df_prepare.head())
+        df_prepare["filename"] = file
         df = pd.concat([df_prepare, df], ignore_index=True)
-        print(df.info())
-    # df.to_csv(os.path.join("data", "flight_data_processed.csv"), index=False)
+    df.to_csv(os.path.join("data", "flight_data_processed.csv"), index=False)
 
-    # create_map(df[["latitude",
-    #                "longitude",
-    #                "zone",
-    #                "climb_rate_m/s",
-    #                "elapsed_time"]])
+    create_map(df[["latitude",
+                   "longitude",
+                   "climb_rate_m/s",
+                   "elapsed_time"]])
