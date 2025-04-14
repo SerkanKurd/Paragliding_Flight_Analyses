@@ -1,7 +1,7 @@
 import pandas as pd
 from geopy.distance import geodesic
 import math
-import getweatherdata
+import weather_data as getweatherdata
 import os
 from IGC_file_parse import getfile as igc
 import folium as fm
@@ -44,19 +44,20 @@ def create_map(df):
     coordinates = df[["latitude", "longitude"]].values.tolist()
     climb_rate = df["climb_rate_m/s"].values.tolist()
     elapsed_time = df["elapsed_time"].values.tolist()
-
+    zone = df["zone"].values.tolist()
+    zone = ["red" if x == "thermal" else "blue" for x in zone]
     map = fm.Map(location=coordinates[0], zoom_start=13)
     for x in range(len(coordinates)):
         fm.CircleMarker(
             location=coordinates[x],
             radius=1,
-            color="blue",
+            color=zone[x],
             fill=True,
-            fill_color="blue",
+            fill_color=zone[x],
             popup=(f"{elapsed_time[x]}, \n{climb_rate[x]}")).add_to(map)
     fm.Marker(location=coordinates[0], popup="Takeoff").add_to(map)
     fm.Marker(location=coordinates[-1], popup="Landing").add_to(map)
-    map.save("map.html")
+    map.save(os.path.join("data", "map.html"))
 
 
 def prepare_data(filename):
@@ -103,25 +104,7 @@ def prepare_data(filename):
         "dew_point",
         "wind_speed",
         "wind_deg"]] = df.apply(get_weather_data, axis=1, result_type="expand")
-    df = df[df["zone"] == "thermal"]
-    df = df[["datetime",
-             "latitude",
-             "longitude",
-             "gps_altitude_m",
-             "pressure_altitude_m",
-             "distance_from_takeoff_m",
-             "speed_km/s",
-             "climb_rate_m/s",
-             "bearing",
-             "delta_bearing",
-             "glide_ratio",
-             "elapsed_time",
-             "temp",
-             "pressure",
-             "humidity",
-             "dew_point",
-             "wind_speed",
-             "wind_deg"]]
+    # df = df[df["zone"] == "thermal"]
     return df
 
 
@@ -136,8 +119,11 @@ if __name__ == "__main__":
         df_prepare["filename"] = file
         df = pd.concat([df_prepare, df], ignore_index=True)
     df.to_csv(os.path.join("data", "flight_data_processed.csv"), index=False)
-
+    print(f"Processed {len(df)} rows")
     create_map(df[["latitude",
                    "longitude",
                    "climb_rate_m/s",
-                   "elapsed_time"]])
+                   "elapsed_time",
+                   "zone"]])
+    print("Data saved to flight_data_processed.csv")
+    print("Map created")
