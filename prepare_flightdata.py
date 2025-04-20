@@ -112,16 +112,15 @@ if __name__ == "__main__":
     if os.path.exists(os.path.join("data", "flight_data_processed.csv")):
         df = pd.read_csv(os.path.join(
             "data", "flight_data_processed.csv"), low_memory=False)
-        df_files = df["filename"].tolist()
+        df_files = set(df["filename"].tolist())
     else:
         df = pd.DataFrame()
-        df_files = []
+        df_files = ()
 
     files = [f for f in os.listdir("flightlogs") if f.lower().endswith(".igc")]
-    for file in files:
-        if file in df_files:
-            print(f"{file} already in dataframe")
-            files.pop(files.index(file))
+    files = [f for f in files if f not in df_files]
+    for df_file in df_files:
+        print("This file already in data frame skiped:", df_file)
 
     for file in files:
         print(f"Processing {files.index(file)+1}/{len(files)} File: {file}")
@@ -135,7 +134,6 @@ if __name__ == "__main__":
         df = pd.concat([df_prepare, df], ignore_index=True)
         df.to_csv(os.path.join("data", "flight_data_processed.csv"),
                   index=False)
-        # os.remove(os.path.join("flightlogs", file))
 
     print(f"Processed {len(df)} rows")
     # create_map(df[["latitude",
