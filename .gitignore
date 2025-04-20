@@ -3,3 +3,4 @@
 /.venv/
 map.html
 /flightlogs/
+data/flight_data_processed.csv
