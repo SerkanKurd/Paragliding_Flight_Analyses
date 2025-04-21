@@ -117,6 +117,10 @@ if __name__ == "__main__":
         df = pd.DataFrame()
         df_files = ()
 
+    if not os.path.exists("flightlogs"):
+        print("flightlogs folder not exist")
+        exit()
+
     files = [f for f in os.listdir("flightlogs") if f.lower().endswith(".igc")]
     files = [f for f in files if f not in df_files]
     for df_file in df_files:
