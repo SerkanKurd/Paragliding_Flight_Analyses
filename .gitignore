@@ -1,7 +1,4 @@
-/.DS_Store*/
-/__pycache__/
-/.venv/
-map.html
-/flightlogs/
-data/flight_data_processed.csv
 .DS_Store
+__pycache__
+flightlogs
+flightdata/flight_data*

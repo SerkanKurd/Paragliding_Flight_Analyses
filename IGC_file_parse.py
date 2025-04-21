@@ -39,8 +39,12 @@ def parse_trackpoint(line):
 
 
 def getfile(file_name, loginterval=1):
-    with open(file_name, 'r') as file:
-        lines = file.readlines()
+    try:
+        with open(file_name, 'r', encoding='utf-8') as file:
+            lines = file.readlines()
+    except UnicodeDecodeError:
+        with open(file_name, 'r', encoding='ISO-8859-1') as file:
+            lines = file.readlines()
 
     flight_data = [line for line in lines if line.startswith('B')]
     flight_date = [line for line in lines if line.startswith(
@@ -76,7 +80,7 @@ def getfile(file_name, loginterval=1):
 def main():
     # Example usage
     file = os.listdir("flightlogs")[0]
-    df = getfile("flightlogs\\" + file, 10)
+    df = getfile(os.path.join("flightlogs", file), 10)
     print(df.head())
     print(df.info())
 
