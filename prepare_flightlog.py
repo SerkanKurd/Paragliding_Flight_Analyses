@@ -71,10 +71,6 @@ def prepare_data(filename):
     df.fillna(0, inplace=True)
     df["elapsed_time"] = (
         df["datetime"] - df["datetime"].iloc[0]).dt.total_seconds()
-    df["zone"] = df.apply(lambda row: "thermal" if (
-        row["climb_m(delta)"] > 0 or
-        row["climb_rate_m/s"] > 0)
-        else "standart", axis=1)
     df[["temp",
         "pressure",
         "humidity",
@@ -83,7 +79,7 @@ def prepare_data(filename):
         "wind_deg"]] = df.apply(get_weather_data, axis=1, result_type="expand")
 
     # find and delete before take off
-    mask = df["speed_km/s"] > 10
+    mask = df["speed_km/s"] > 25
     if mask.any():
         first_idx = mask.idxmax()
         df = df.loc[first_idx:].reset_index(drop=True)
@@ -121,8 +117,7 @@ if __name__ == "__main__":
         print(df_prepare.head())
         df_prepare["filename"] = file
         df = pd.concat([df_prepare, df], ignore_index=True)
-        df.to_csv(os.path.join("data", "flight_data.csv"),
-                  index=False)
+    df.to_csv(os.path.join("data", "flight_data.csv"), index=False)
 
     print(f"Processed {len(df)} rows")
     print("Data saved to flight_data.csv")

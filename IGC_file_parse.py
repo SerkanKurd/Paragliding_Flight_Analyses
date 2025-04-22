@@ -69,7 +69,7 @@ def getfile(file_name, loginterval=1):
         "gps_altitude_m",
         "pressure_altitude_m"
     ]]
-
+    df = df.drop_duplicates(subset=["filename", "datetime"])
     if loginterval > 1:
         # Downsample the DataFrame
         df = df.iloc[::loginterval, :]
