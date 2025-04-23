@@ -1,4 +1,2 @@
-.DS_Store
-__pycache__
-flightlogs
-data/flight_data*
+data/raw/
+data/interim/flight_data.csv
