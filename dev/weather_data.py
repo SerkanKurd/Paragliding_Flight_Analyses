@@ -1,12 +1,12 @@
 import requests
 import pandas as pd
 from datetime import datetime, timezone
-import db_connection as db
+import os
 
 
 def api_call(lat, lon, dt):
     # OpenWeatherMap API call
-    url = f"https://api.XXXXopenweathermap.org/data/3.0/onecall/timemachine?lat={lat}&lon={lon}&units=metric&dt={dt}&appid=bedfa32222f31e3d52efbe3fc142575e"
+    url = f"https://api.openweathermap.org/data/3.0/onecall/timemachine?lat={lat}&lon={lon}&units=metric&dt={dt}&appid=bedfa32222f31e3d52efbe3fc142575e"
     response = requests.get(url)
     if response.status_code == 200:
         data = response.json()
@@ -16,6 +16,7 @@ def api_call(lat, lon, dt):
 
 
 def main(lat, lon, timestamp):
+
     lat = round(lat, 1)
     lon = round(lon, 1)
     if type(timestamp) is str:
@@ -25,10 +26,13 @@ def main(lat, lon, timestamp):
                                   minute=0, second=0, microsecond=0)
     dt = int(timestamp.timestamp())
 
-    df = db.read_db("weather_data")
-    matched_rows = df[(df["lat"] == lat) &
-                      (df["lon"] == lon) &
-                      (df["dt"] == dt)]
+    if os.path.exists(os.path.join("data", "weather_data.csv")):
+        df = pd.read_csv(os.path.join("data", "weather_data.csv"))
+        matched_rows = df[(df["lat"] == lat) &
+                          (df["lon"] == lon) &
+                          (df["dt"] == dt)]
+    else:
+        matched_rows = pd.DataFrame()
 
     if matched_rows.empty:
         weather_json = api_call(lat, lon, dt)
@@ -45,7 +49,7 @@ def main(lat, lon, timestamp):
         else:
             df = weather_data
 
-        db.write_db(df, "weather_data")
+        df.to_csv(os.path.join("data", "weather_data.csv"), index=False)
 
         result = pd.Series(weather_data[[
                            "temp", "pressure", "humidity",

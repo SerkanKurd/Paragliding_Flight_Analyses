@@ -1,11 +1,10 @@
 import pandas as pd
-import weather_data as getweatherdata
-from IGC_file_parse import getfile as igc
+import scripts.weather_data as getweatherdata
+from scripts.IGC_file_parse import getfile as igc
 from functools import lru_cache
 from geopy.distance import geodesic
 import math
 import os
-import db_connection as db
 
 
 def calculate_bearing(row):
@@ -46,95 +45,79 @@ def get_weather_data(row):
 
 
 def prepare_data(filename):
-    df = igc(filename)
-
+    df = igc(os.path.join("flightlogs", filename), 1)
     df["previous_latitude"] = df["latitude"].shift(1)
     df["previous_longitude"] = df["longitude"].shift(1)
-    df.fillna(0, inplace=True)
-    # df.drop(df.index[0], inplace=True)
-
     df["distance_from_takeoff_m"] = df.apply(
         lambda row: geodesic(
             (row["latitude"], row["longitude"]),
             (df["latitude"].iloc[0], df["longitude"].iloc[0])).meters, axis=1)
-
+    df.drop(df.index[0], inplace=True)
     df["distance_m"] = df.apply(lambda row: geodesic(
         (row["previous_latitude"], row["previous_longitude"]),
         (row["latitude"], row["longitude"])).meters, axis=1)
-
     df["speed_km/s"] = ((df["distance_m"]/1000) /
                         (df["datetime"].diff().dt.total_seconds()/3600))
-
-    df["climb_m"] = df["pressure_altitude_m"].diff()
-    df["climb_m(delta)"] = df["pressure_altitude_m"].diff(20)
+    df["climb_m"] = df["gps_altitude_m"].diff()
+    df["climb_m(delta)"] = df["gps_altitude_m"].diff(20)
     df["climb_rate_m/s"] = df["climb_m"] / \
         df["datetime"].diff().dt.total_seconds()
+    df["bearing"] = df.apply(calculate_bearing, axis=1)
+    df["delta_bearing"] = abs((df["bearing"].diff() + 180) % 360 - 180)
     df["glide_ratio"] = df.apply(
         lambda row: row["distance_m"] /
         abs(row["climb_m"]) if row["climb_m"] != 0 else 0,
         axis=1)
-
-    df["bearing"] = df.apply(calculate_bearing, axis=1)
-    df["delta_bearing"] = abs((df["bearing"].diff() + 180) % 360 - 180)
-
+    df.fillna(0, inplace=True)
     df["elapsed_time"] = (
         df["datetime"] - df["datetime"].iloc[0]).dt.total_seconds()
-    df["delta_time"] = (df["datetime"].diff()).dt.total_seconds()
-
-    # df[["temp",
-    #     "pressure",
-    #     "humidity",
-    #     "dew_point",
-    #     "wind_speed",
-    #     "wind_deg"]] = df.apply(get_weather_data,
-    #                             axis=1,
-    #                             result_type="expand")
+    df[["temp",
+        "pressure",
+        "humidity",
+        "dew_point",
+        "wind_speed",
+        "wind_deg"]] = df.apply(get_weather_data, axis=1, result_type="expand")
 
     # find and delete before take off
     mask = df["speed_km/s"] > 25
-    true_idx = mask[mask].index
-
-    if len(true_idx):
-        first_true = true_idx[0]
-        last_true = true_idx[-1]
+    if mask.any():
+        first_idx = mask.idxmax()
+        df = df.loc[first_idx:].reset_index(drop=True)
     else:
-        first_true = last_true = None
-    df = df.loc[first_true:last_true].reset_index(drop=True)
-
+        df = df.iloc[0:0]
     return df
 
 
-def main():
-    file_dir = os.path.dirname(os.path.abspath(__file__))
-    base_dir = os.path.dirname(file_dir)
-    flightlogs_dir = os.path.join(base_dir, "data", "raw")
-    files = [f for f in os.listdir(flightlogs_dir)
-             if f.endswith(".igc") or f.endswith(".IGC")]
-    # files = files[:3]  # Limit to first file for testing
-    df = pd.DataFrame()
-    error_files = []
-    db.delete_db("flights")
-    for file in files:
-        file_path = os.path.join(flightlogs_dir, file)
-        print("\n", "------------------------------------------------------")
-        print(f"Processing {files.index(file)+1}/{len(files)} File: {file}\n")
-        print(f"Processing {file_path}...\n")
-        try:
-            df_prepare = prepare_data(file_path)
-            print(df_prepare.head())
-            df = pd.concat([df_prepare, df], ignore_index=True)
-        except Exception as e:
-            print(f"Error processing {file_path}: {e}")
-            error_files.append(file)
-            continue
-    if df.empty:
-        print("No data to save.")
-        return
-    print("Saving data to database...")
-    for error_file in error_files:
-        print(f"\n{error_file.index} Error processing file: {error_file}")
-    db.write_db(df, "flights")
-
-
 if __name__ == "__main__":
-    main()
+    if os.path.exists(os.path.join("data", "flight_data.csv")):
+        df = pd.read_csv(os.path.join(
+            "data", "flight_data.csv"), low_memory=False)
+        df_files = set(df["filename"].tolist())
+    else:
+        df = pd.DataFrame()
+        df_files = set()
+
+    if not os.path.exists("flightlogs"):
+        print("flightlogs folder not exist")
+        exit()
+
+    files = [f for f in os.listdir("flightlogs") if f.lower().endswith(".igc")]
+    for file in files:
+        if file in df_files:
+            print("This file already in data frame skipped:", file)
+
+    files = [f for f in files if f not in df_files]
+    for file in files:
+        print(f"Processing {files.index(file)+1}/{len(files)} File: {file}")
+        try:
+            df_prepare = prepare_data(file)
+        except Exception as e:
+            print("Error on", file, ":", e)
+            continue
+        print(df_prepare.head())
+        df_prepare["filename"] = file
+        df = pd.concat([df_prepare, df], ignore_index=True)
+    df.to_csv(os.path.join("data", "flight_data.csv"), index=False)
+
+    print(f"Processed {len(df)} rows")
+    print("Data saved to flight_data.csv")
