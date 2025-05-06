@@ -6,7 +6,7 @@ import db_connection as db
 
 def api_call(lat, lon, dt):
     # OpenWeatherMap API call
-    url = f"https://api.XXXXopenweathermap.org/data/3.0/onecall/timemachine?lat={lat}&lon={lon}&units=metric&dt={dt}&appid=bedfa32222f31e3d52efbe3fc142575e"
+    url = f"https://api.openweathermap.org/data/3.0/onecall/timemachine?lat={lat}&lon={lon}&units=metric&dt={dt}&appid=bedfa32222f31e3d52efbe3fc142575e"
     response = requests.get(url)
     if response.status_code == 200:
         data = response.json()
@@ -25,12 +25,9 @@ def main(lat, lon, timestamp):
                                   minute=0, second=0, microsecond=0)
     dt = int(timestamp.timestamp())
 
-    df = db.read_db("weather_data")
-    matched_rows = df[(df["lat"] == lat) &
-                      (df["lon"] == lon) &
-                      (df["dt"] == dt)]
+    matched_rows = db.getdata("weather_data", f"lat = {lat} AND lon = {lon} AND dt = {dt}")
 
-    if matched_rows.empty:
+    if matched_rows == []:
         weather_json = api_call(lat, lon, dt)
         weather_data = pd.json_normalize(weather_json["data"][0])
         weather_data["lat"] = lat
@@ -39,23 +36,11 @@ def main(lat, lon, timestamp):
         weather_data = weather_data[["lat", "lon", "datetime", "dt", "temp",
                                      "pressure", "humidity", "dew_point",
                                      "wind_speed", "wind_deg"]]
+        matched_rows = weather_data.values.tolist()
 
-        if "df" in locals():
-            df = pd.concat([df, weather_data], ignore_index=True)
-        else:
-            df = weather_data
+        db.write_db(weather_data, "weather_data")
 
-        db.write_db(df, "weather_data")
-
-        result = pd.Series(weather_data[[
-                           "temp", "pressure", "humidity",
-                           "dew_point", "wind_speed", "wind_deg"]].iloc[0])
-    else:
-        result = pd.Series(matched_rows[[
-                           "temp", "pressure", "humidity",
-                           "dew_point", "wind_speed", "wind_deg"]].iloc[0])
-
-    return result.values.tolist()
+    return matched_rows[4:]
 
 
 if __name__ == "__main__":

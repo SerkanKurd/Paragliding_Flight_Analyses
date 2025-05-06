@@ -81,14 +81,14 @@ def prepare_data(filename):
         df["datetime"] - df["datetime"].iloc[0]).dt.total_seconds()
     df["delta_time"] = (df["datetime"].diff()).dt.total_seconds()
 
-    # df[["temp",
-    #     "pressure",
-    #     "humidity",
-    #     "dew_point",
-    #     "wind_speed",
-    #     "wind_deg"]] = df.apply(get_weather_data,
-    #                             axis=1,
-    #                             result_type="expand")
+    df[["temp",
+        "pressure",
+        "humidity",
+        "dew_point",
+        "wind_speed",
+        "wind_deg"]] = df.apply(get_weather_data,
+                                axis=1,
+                                result_type="expand")
 
     # find and delete before take off
     mask = df["speed_km/s"] > 25
@@ -105,6 +105,7 @@ def prepare_data(filename):
 
 
 def main():
+    db.delete_db("flights")
     file_dir = os.path.dirname(os.path.abspath(__file__))
     base_dir = os.path.dirname(file_dir)
     flightlogs_dir = os.path.join(base_dir, "data", "raw")

@@ -3,7 +3,7 @@ import sqlite3
 import pandas as pd
 
 
-def create_connection(db_file=None):
+def create_connection(db_file=None) -> sqlite3.Connection:
     file_dir = os.path.dirname(os.path.abspath(__file__))
     base_dir = os.path.dirname(file_dir)
     if db_file is None:
@@ -39,6 +39,22 @@ def delete_db(table_name: str,
     conn.close()
 
 
+def getdata(table_name: str, query: str, db_file: str = None) -> list:
+    conn = create_connection(db_file)
+    cursor = conn.cursor()
+    sql_query = f"SELECT * FROM {table_name} WHERE {query}"
+
+    try:
+        cursor.execute(sql_query)
+        data = cursor.fetchall()
+    except sqlite3.Error as e:
+        print(f"Database error: {e}")
+        data = []
+    conn.close()
+    data = data[0]
+    return data
+
+
 if __name__ == "__main__":
     # Example usage
     df = pd.DataFrame({
@@ -48,6 +64,7 @@ if __name__ == "__main__":
     try:
         write_db(df, 'test_table')
         print(read_db('test_table'))
+        print(getdata('test_table', 'id = 1'))
         delete_db('test_table')
     except Exception as e:
         print(f"An error occurred: {e}")
