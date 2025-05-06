@@ -25,7 +25,8 @@ def main(lat, lon, timestamp):
                                   minute=0, second=0, microsecond=0)
     dt = int(timestamp.timestamp())
 
-    matched_rows = db.getdata("weather_data", f"lat = {lat} AND lon = {lon} AND dt = {dt}")
+    matched_rows = db.getdata(
+        "weather_data", f"lat = {lat} AND lon = {lon} AND dt = {dt}")
 
     if matched_rows == []:
         weather_json = api_call(lat, lon, dt)
