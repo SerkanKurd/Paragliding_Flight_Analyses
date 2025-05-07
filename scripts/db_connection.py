@@ -15,7 +15,7 @@ def create_connection(db_file=None) -> sqlite3.Connection:
 def write_db(df: pd.DataFrame,
              table_name: str,
              db_file: str = None,
-             exists: str = "append"):
+             exists: str = "replace"):
     conn = create_connection(db_file)
     df.to_sql(table_name, conn, if_exists=exists, index=False)
     conn.close()
