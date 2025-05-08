@@ -1,6 +1,5 @@
 .venv
 __pycache__
-data/raw/
-data/interim/flight_data.csv
-data/MyDB.db
+data/
 .DS_Store
+scripts/models/
