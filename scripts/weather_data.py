@@ -2,11 +2,22 @@ import requests
 import pandas as pd
 from datetime import datetime, timezone
 import db_connection as db
+import os
+import json
+
+
+def get_api_key():
+    file_dir = os.path.dirname(os.path.abspath(__file__))
+    base_dir = os.path.dirname(file_dir)
+    file_path = os.path.join(base_dir, "data", "weather_api_key.json")
+    with open(file_path, "r") as f:
+        api_key = json.load(f)
+    return api_key["api_key"]
 
 
 def api_call(lat, lon, dt):
     # OpenWeatherMap API call
-    url = f"https://api.openweathermap.org/data/3.0/onecall/timemachine?lat={lat}&lon={lon}&units=metric&dt={dt}&appid=bedfa32222f31e3d52efbe3fc142575e"
+    url = f"https://api.openweathermap.org/data/3.0/onecall/timemachine?lat={lat}&lon={lon}&units=metric&dt={dt}&appid={get_api_key()}"
     response = requests.get(url)
     if response.status_code == 200:
         data = response.json()
@@ -45,5 +56,6 @@ def main(lat, lon, timestamp):
 
 
 if __name__ == "__main__":
+
     # testing
-    print(main(36.539000, 29.169517, "2025-04-05 12:35:00"))
+    # print(main(36.539000, 29.169517, "2025-04-05 12:35:00"))
