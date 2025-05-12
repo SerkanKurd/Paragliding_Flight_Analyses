@@ -14,8 +14,8 @@ def create_connection(db_file=None) -> sqlite3.Connection:
 
 def write_db(df: pd.DataFrame,
              table_name: str,
-             db_file: str = None,
-             exists: str = "replace"):
+             exists: str = "replace",
+             db_file: str = None):
     conn = create_connection(db_file)
     df.to_sql(table_name, conn, if_exists=exists, index=False)
     conn.close()
@@ -51,8 +51,9 @@ def getdata(table_name: str, query: str, db_file: str = None) -> list:
         print(f"Database error: {e}")
         data = []
     conn.close()
-    data = data[0]
-    return data
+    if data == []:
+        return []
+    return data[0]
 
 
 if __name__ == "__main__":

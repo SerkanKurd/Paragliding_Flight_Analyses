@@ -48,14 +48,13 @@ def main(lat, lon, timestamp):
         weather_data = weather_data[["lat", "lon", "datetime", "dt", "temp",
                                      "pressure", "humidity", "dew_point",
                                      "wind_speed", "wind_deg"]]
-        matched_rows = weather_data.values.tolist()
+        matched_rows = weather_data.values.tolist()[0]
 
-        db.write_db(weather_data, "weather_data")
+        db.write_db(weather_data, "weather_data", "append")
 
     return matched_rows[4:]
 
 
 if __name__ == "__main__":
-
     # testing
-    # print(main(36.539000, 29.169517, "2025-04-05 12:35:00"))
+    print(main(36.539000, 29.169517, "2025-05-10 12:35:00"))
