@@ -1,11 +1,11 @@
 import pandas as pd
-import weather_data as getweatherdata
-from IGC_file_parse import getfile as igc
+import app.utils.weather_data as getweatherdata
 from functools import lru_cache
 from geopy.distance import geodesic
 import math
 import os
-import db_connection as db
+from app.utils.IGC_file_parse import getfile as igc
+import app.utils.db_connection as db
 
 
 def calculate_bearing(row):

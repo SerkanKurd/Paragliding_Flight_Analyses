@@ -1,7 +1,7 @@
 import requests
 import pandas as pd
 from datetime import datetime, timezone
-import db_connection as db
+import app.utils.db_connection as db
 import os
 import json
 
