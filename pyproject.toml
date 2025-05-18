@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "your-package-name"
 version = "0.1.0"
 description = "A short description of your package"
-authors = [{ name="Your Name", email="you@example.com" }]
+authors = [{ name="Your Name", email="serkankurd@gmail.com" }]
 readme = "README.md"
 license = { file = "LICENSE" }
 dependencies = [
