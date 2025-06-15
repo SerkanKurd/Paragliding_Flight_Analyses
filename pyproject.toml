@@ -3,10 +3,10 @@ requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "your-package-name"
+name = "Paragliding Flight Analysis"
 version = "0.1.0"
 description = "A short description of your package"
-authors = [{ name="Your Name", email="serkankurd@gmail.com" }]
+authors = [{ name="Serkan Kurd", email="serkankurd@gmail.com" }]
 readme = "README.md"
 license = { file = "LICENSE" }
 dependencies = [
