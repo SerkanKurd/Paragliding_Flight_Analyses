@@ -4,7 +4,8 @@ import pandas as pd
 
 
 def create_connection(db_file="") -> sqlite3.Connection:
-    db_file_dir = os.path.join(os.getcwd(), "data")
+    file_dir = os.path.dirname(os.path.abspath(__file__))
+    db_file_dir = os.path.join(file_dir, "data")
     if db_file == "":
         db_file = os.path.join(db_file_dir, "MyDB.db")
     return sqlite3.connect(db_file)
@@ -56,6 +57,8 @@ def getdata(table_name: str, query: str, db_file: str = "") -> list:
 
 if __name__ == "__main__":
     db_file_dir = os.path.join(os.getcwd(), "app", "data", "MyDB.db")
+    if not os.path.exists(db_file_dir):
+        print(f"Database file not found at {db_file_dir}. Creating a new one.")
     # # Example usage
     df = pd.DataFrame({
         'id': [1, 2, 3],

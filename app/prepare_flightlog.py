@@ -3,9 +3,9 @@ from functools import lru_cache
 from geopy.distance import geodesic
 import math
 import os
-import utils.weather_data as getweatherdata
-from utils.IGC_file_parse import getfile as igc
-import utils.db_connection as db
+import weather_data as getweatherdata
+from IGC_file_parse import getfile as igc
+import db_connection as db
 
 
 def calculate_bearing(row):
@@ -46,6 +46,7 @@ def get_weather_data(row):
 
 
 def prepare_data(filename):
+    print(filename)
     df = igc(filename)
 
     df["previous_latitude"] = df["latitude"].shift(1)

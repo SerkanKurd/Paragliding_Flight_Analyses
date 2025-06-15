@@ -1,16 +1,15 @@
 import requests
 import pandas as pd
 from datetime import datetime, timezone
-import app.utils.db_connection as db
+import db_connection as db
 import os
 import json
 
 
 def get_api_key():
     file_dir = os.path.dirname(os.path.abspath(__file__))
-    base_dir = os.path.dirname(file_dir)
-    file_path = os.path.join(base_dir, "data", "weather_api_key.json")
-    with open(file_path, "r") as f:
+    json_path = os.path.join(file_dir, "data", "weather_api_key.json")
+    with open(json_path, "r") as f:
         api_key = json.load(f)
     return api_key["api_key"]
 

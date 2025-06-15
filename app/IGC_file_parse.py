@@ -1,6 +1,6 @@
 import pandas as pd
 import os
-import app.utils.db_connection as db
+import db_connection as db
 
 
 def parse_trackpoint(line):
