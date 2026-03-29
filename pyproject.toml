@@ -1,15 +1,13 @@
-[build-system]
-requires = ["setuptools", "wheel"]
-build-backend = "setuptools.build_meta"
-
 [project]
-name = "Paragliding Flight Analysis"
+name = "Paragliding_Flight_Analysis"
 version = "0.1.0"
-description = "A short description of your package"
-authors = [{ name="Serkan Kurd", email="serkankurd@gmail.com" }]
+description = "Paragliding Flight Analysis"
 readme = "README.md"
-license = { file = "LICENSE" }
+requires-python = ">=3.12"
 dependencies = [
-    "numpy",  # Example dependency
+    "geopy>=2.4.1",
+    "ipykernel>=7.2.0",
+    "pandas>=3.0.1",
+    "scikit-learn>=1.8.0",
+    "tensorflow>=2.21.0",
 ]
-requires-python = ">=3.8"
