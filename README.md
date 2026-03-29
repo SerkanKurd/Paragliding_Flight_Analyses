@@ -701,24 +701,43 @@ Bu projeye ait tüm kodlar Github’da paylaşılmıştır \[21\].
 # 6\. Kaynakça
 
 [1] FAI, Technical Specification For IGC-Approved GNSS Flight Recorders, [https://www.fai.org/sites/default/files/igc\_fr\_specification\_2020-11-25\_with\_al6.pdf](https://www.fai.org/sites/default/files/igc_fr_specification_2020-11-25_with_al6.pdf), **2020**
+
 [2] FAI, IGC-Approvals for GNSS Flight Recorders, [https://www.fai.org/sites/default/files/igc-approval\_table\_history\_-\_2021-8-22.pdf](https://www.fai.org/sites/default/files/igc-approval_table_history_-_2021-8-22.pdf), **2021**
+
 [3] FAI, XC Scoring, [https://www.fai.org/sites/default/files/civl/documents/sporting\_code\_s7\_f\_-\_xc\_scoring\_2024.pdf](https://www.fai.org/sites/default/files/civl/documents/sporting_code_s7_f_-_xc_scoring_2024.pdf), **2024**
+
 [4] Forster-Lewis, I., IGC File Format Reference and Developers' Guide, [https://xp-soaring.github.io/igc\_file\_format/igc\_format\_2008.html](https://xp-soaring.github.io/igc_file_format/igc_format_2008.html), **2008**
+
 [5] Goodfellow, I., Bengio, Y. ve Courville, A., Deep Learning (MIT Press), [https://mitpress.mit.edu/9780262035613/deep-learning/](https://mitpress.mit.edu/9780262035613/deep-learning/%20), **2016**.
+
 [6] Teskey, P. B. ve Fox, R., Use of GPS for Determining Free Flight Performance, **2002**
+
 [7] Newton, L. J., Learning Neural Network Representations of Aircraft Flight Dynamics, **2020**
+
 [8] Zheng, Y., Tao, J., Sun, Q., Sun, H., Chen, Z., Sun, M., ve Duan, F., Deep-Reinforcement-Learning-Based Active Disturbance Rejection Control for Lateral Path Following of Parafoil System. Sustainability, 15, 435. [https://www.mdpi.com/2071-1050/15/1/435](https://www.mdpi.com/2071-1050/15/1/435), **2023**
+
 [9] Clark, P., XC Secrets: Learning From Tracklogs, [https://flybubble.com/blog/xc-secrets-learning-from-tracklogs](https://flybubble.com/blog/xc-secrets-learning-from-tracklogs), **2020**
+
 [10] Heatwole, P., Parametric Paraglider Modeling, [https://github.com/pfheatwole/thesis](https://github.com/pfheatwole/thesis), **2022**
+
 [11] Heatwole, P., glidersim, [https://github.com/pfheatwole/glidersim](https://github.com/pfheatwole/glidersim), **2021**
+
 [12] Momtchev, M., igc-xc-score, [https://github.com/mmomtchev/igc-xc-score](https://github.com/mmomtchev/igc-xc-score), **2007**
+
 [13] OpenWeather, OpenWeather One Call API 3.0, [https://openweathermap.org/api/one-call-3](https://openweathermap.org/api/one-call-3), **2025**
+
 [14] Manolis, A., Leonardo XC Server. [https://www.ypforum.com/leonardo/](https://www.ypforum.com/leonardo/), **2011**
+
 [15] Demsar, J., Curk, T., Erjavec, A., Gorup, C., Hocevar, T., Milutinovic, M., Mozina, M., Polajnar, M., Toplak, M., Staric, A., Stajdohar, M., Umek, L., Zagar, L., Zbontar, J., Zitnik, M., Zupan, B., Orange: Data Mining Toolbox in Python, Journal of Machine Learning Research 14(Aug): 2349−2353. [http://jmlr.org/papers/v14/demsar13a.html](http://jmlr.org/papers/v14/demsar13a.html), **2013**
-[16] Pedregosa, F., Varoquaux, G., Gramfort, A., Michel, V., Thirion, B., Grisel, O., Blondel, M., Prettenhofer, P., Weiss, R., Dubourg, V., Vanderplas, J., Passos, A., Cournapeau, D., Brucher, M., Perrot, M., Duchesnay, E., Scikit-learn: Machine Learning in Python, Journal of Machine Learning Research (sayı 12, sayfa 2825-2830), [https://jmlr.csail.mit.edu/papers/v12/pedregosa11a.html](https://jmlr.csail.mit.edu/papers/v12/pedregosa11a.html),  
-     [https://scikit-learn.org/](https://scikit-learn.org/), **2011**
+
+[16] Pedregosa, F., Varoquaux, G., Gramfort, A., Michel, V., Thirion, B., Grisel, O., Blondel, M., Prettenhofer, P., Weiss, R., Dubourg, V., Vanderplas, J., Passos, A., Cournapeau, D., Brucher, M., Perrot, M., Duchesnay, E., Scikit-learn: Machine Learning in Python, Journal of Machine Learning Research (sayı 12, sayfa 2825-2830), [https://jmlr.csail.mit.edu/papers/v12/pedregosa11a.html](https://jmlr.csail.mit.edu/papers/v12/pedregosa11a.html), [https://scikit-learn.org/](https://scikit-learn.org/), **2011**
+
 [17] Abadi, M., Agarwal, A., Barham, P., Brevdo, E., Chen, Z., Citro, C., Corrado, G.S., Davis, A., Dean, J., Devin, M., Ghemawat, S., Goodfellow, I., Harp, A., Irving, G., Isard, M., Jozefowicz, R., Jia, Y., Kaiser, L., Kudlur, M., Levenberg, J., Mané, D., Schuster, M., Monga, R., Moore, S., Murray, D., Olah, C., Shlens, J, Steiner, Benoit, Sutskever, I., Talwar, K., Tucker, P., Vanhoucke, V., Vasudevan, V., Viégas, F., Vinyals, O., Warden, P., Wattenberg, M., Wicke, M., Yu, Y. ve Zheng, X., TensorFlow: Large-scale machine learning on heterogeneous systems, [https://www.usenix.org/system/files/conference/osdi16/osdi16-abadi.pdf](https://www.usenix.org/system/files/conference/osdi16/osdi16-abadi.pdf), [https://www.tensorflow.org/](https://www.tensorflow.org/), **2015**
+
 [18] LeCun, Y., Bengio, Y. Ve Hinton, G., Deep learning, Nature (vol521, 28 May 2015, syf.436-444), **2015**
+
 [19] Schultz, A., Thipphavong, D., & Erzberger, H. (2012, Eylül). Adaptive trajectory prediction algorithm for climbing flights (AIAA Paper No. 2012-4931). AIAA/ISSMO Multidisciplinary Analysis and Optimization Conference. [https://doi.org/10.2514/6.2012-4931](https://doi.org/10.2514/6.2012-4931), **2012**
+
 [20] Pearson, K. Note on regression and inheritance in the case of two parents. Proceedings of the Royal Society of London, 58, 240–242. [https://doi.org/10.1098/rspl.1895.0041](https://doi.org/10.1098/rspl.1895.0041), **1985**
+
 [21] S. Kurd, Paragliding Flight Analyses, GitHub repository, [https://github.com/SerkanKurd/Paragliding\_Flight\_Analyses](https://github.com/SerkanKurd/Paragliding_Flight_Analyses), **2025**
